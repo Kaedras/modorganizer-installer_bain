@@ -25,13 +25,14 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #include "baincomplexinstallerdialog.h"
 
 using namespace MOBase;
+using namespace Qt::StringLiterals;
 
 BainComplexInstallerDialog::BainComplexInstallerDialog(
     const std::vector<std::shared_ptr<const MOBase::FileTreeEntry>>& subpackages,
     const GuessedValue<QString>& modName, const QStringList& defaultOptions,
     const QString& packageTXT, QWidget* parent)
-    : TutorableDialog("BainInstaller", parent), ui(new Ui::BainComplexInstallerDialog),
-      m_Manual(false), m_PackageTXT(packageTXT)
+    : TutorableDialog(u"BainInstaller"_s, parent),
+      ui(new Ui::BainComplexInstallerDialog), m_Manual(false), m_PackageTXT(packageTXT)
 {
   ui->setupUi(this);
 
@@ -49,7 +50,8 @@ BainComplexInstallerDialog::BainComplexInstallerDialog(
     QListWidgetItem* item = new QListWidgetItem(name, ui->optionsList);
     item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
 
-    if (name.mid(0, 2) == "00" || defaultOptions.contains(name, Qt::CaseInsensitive)) {
+    if (name.mid(0, 2) == "00"_L1 ||
+        defaultOptions.contains(name, Qt::CaseInsensitive)) {
       item->setCheckState(Qt::Checked);
     } else {
       item->setCheckState(Qt::Unchecked);

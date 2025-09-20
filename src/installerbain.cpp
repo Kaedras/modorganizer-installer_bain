@@ -32,6 +32,7 @@ along with Mod Organizer.  If not, see <http://www.gnu.org/licenses/>.
 #include "baincomplexinstallerdialog.h"
 
 using namespace MOBase;
+using namespace Qt::StringLiterals;
 
 InstallerBAIN::InstallerBAIN() : m_MOInfo(nullptr) {}
 
@@ -43,7 +44,7 @@ bool InstallerBAIN::init(IOrganizer* moInfo)
 
 QString InstallerBAIN::name() const
 {
-  return "BAIN Installer";
+  return u"BAIN Installer"_s;
 }
 
 QString InstallerBAIN::localizedName() const
@@ -53,7 +54,7 @@ QString InstallerBAIN::localizedName() const
 
 QString InstallerBAIN::author() const
 {
-  return "Tannin";
+  return u"Tannin"_s;
 }
 
 QString InstallerBAIN::description() const
@@ -91,7 +92,7 @@ void InstallerBAIN::onInstallationStart(QString const&, bool, IModInterface* cur
   if (currentMod) {
     auto settings = currentMod->pluginSettings(name());
     for (auto& [name, value] : settings) {
-      if (name.startsWith("option")) {
+      if (name.startsWith("option"_L1)) {
         m_PreviousOptions.append(value.toString());
       }
     }
@@ -103,7 +104,7 @@ void InstallerBAIN::onInstallationEnd(EInstallResult result, IModInterface* newM
   if (result == EInstallResult::RESULT_SUCCESS && m_InstallerUsed) {
     newMod->clearPluginSettings(name());
     for (auto i = 0; i < m_SelectedOptions.size(); ++i) {
-      newMod->setPluginSetting(name(), QString("option%1").arg(i),
+      newMod->setPluginSetting(name(), QStringLiteral("option%1").arg(i),
                                m_SelectedOptions[i]);
     }
   }
@@ -115,7 +116,7 @@ InstallerBAIN::findSubpackages(std::shared_ptr<const MOBase::IFileTree> tree,
 {
   // Folders that can be present but do not impact the installation:
   static const std::set<QString, FileNameComparator> IGNORED_FOLDERS{
-      "fomod", "omod conversion data", "images", "screenshots", "docs"};
+      u"fomod"_s, u"omod conversion data"_s, u"images"_s, u"screenshots"_s, u"docs"_s};
 
   auto checker = m_MOInfo->gameFeatures()->gameFeature<ModDataChecker>();
 
@@ -134,7 +135,7 @@ InstallerBAIN::findSubpackages(std::shared_ptr<const MOBase::IFileTree> tree,
 
     // ignore fomod in case of combined fomod/bain packages.
     // dirs starting with -- are supposed to be ignored
-    if (IGNORED_FOLDERS.contains(entry->name()) || entry->name().startsWith("--")) {
+    if (IGNORED_FOLDERS.contains(entry->name()) || entry->name().startsWith("--"_L1)) {
       continue;
     }
 
@@ -185,7 +186,7 @@ IPluginInstaller::EInstallResult
 InstallerBAIN::install(GuessedValue<QString>& modName, std::shared_ptr<IFileTree>& tree,
                        QString&, int&)
 {
-  auto entry = tree->find("package.txt", FileTreeEntry::FILE);
+  auto entry = tree->find(u"package.txt"_s, FileTreeEntry::FILE);
 
   QString packageTXT;
   if (entry != nullptr) {
